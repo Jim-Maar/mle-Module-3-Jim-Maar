@@ -62,6 +62,12 @@ def is_close(x: float, y: float) -> float:
         return 0.0
 
 
+def exp(x: float) -> float:
+    "$f(x) = e^{x}$"
+    return math.exp(x)
+    # return math.e ** x
+
+
 def sigmoid(x: float) -> float:
     r"""
     $f(x) =  \frac{1.0}{(1.0 + e^{-x})}$
@@ -75,9 +81,9 @@ def sigmoid(x: float) -> float:
     for stability.
     """
     if x > 0:
-        return 1.0 / (1.0 + exp(-x))
+        return 1.0 / (1.0 + math.exp(-x))
     else:
-        return exp(x) / (1.0 + exp(x))
+        return math.exp(x) / (1.0 + math.exp(x))
 
 
 def relu(x: float) -> float:
@@ -98,12 +104,6 @@ EPS = 1e-6
 def log(x: float) -> float:
     "$f(x) = log(x)$"
     return math.log(x + EPS)
-
-
-def exp(x: float) -> float:
-    "$f(x) = e^{x}$"
-    return math.exp(x)
-    # return math.e ** x
 
 
 def log_back(x: float, d: float) -> float:
