@@ -71,7 +71,7 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
     # stride = tuple(stride)
     for i, strideVal in enumerate(stride):
         out_index[i] = ord // strideVal
-        ordinal = ord % strideVal
+        ord = ord % strideVal
 
 
 def to_index_from_strides(ordinal: int, strides: Strides, out_index: OutIndex) -> None:
