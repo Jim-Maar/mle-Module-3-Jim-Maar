@@ -155,7 +155,7 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
             finalShape2[i] = finalShape1[i]
         else:
             raise IndexingError()
-    return finalShape1
+    return tuple(finalShape1)
 
 
 def strides_from_shape(shape: UserShape) -> UserStrides:
