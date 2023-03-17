@@ -62,6 +62,7 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
         out_index : return index corresponding to position.
 
     """
+    ord: int = ordinal
     stride: Iterable[int] = len(shape) * [0]
     strideVal: int = 1
     for i in range(len(shape) - 1, -1, -1):
@@ -69,8 +70,8 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
         strideVal *= shape[i]
     # stride = tuple(stride)
     for i, strideVal in enumerate(stride):
-        out_index[i] = ordinal // strideVal
-        ordinal = ordinal % strideVal
+        out_index[i] = ord // strideVal
+        ordinal = ord % strideVal
 
 
 def to_index_from_strides(ordinal: int, strides: Strides, out_index: OutIndex) -> None:
@@ -86,9 +87,10 @@ def to_index_from_strides(ordinal: int, strides: Strides, out_index: OutIndex) -
         out_index : return index corresponding to position.
 
     """
+    ord: int = ordinal
     for i, strideVal in enumerate(strides):
-        out_index[i] = ordinal // strideVal
-        ordinal = ordinal % strideVal
+        out_index[i] = ord // strideVal
+        ord = ord % strideVal
 
 
 def broadcast_index(
@@ -115,6 +117,7 @@ def broadcast_index(
     assert bigShapeDim >= shapeDim
     assert len(out_index) == shapeDim
     dimDiff = bigShapeDim - shapeDim
+    j: int = 0
     for i in range(dimDiff, bigShapeDim):
         j = i - dimDiff
         out_index[j] = min(big_index[i], shape[j] - 1)
@@ -152,7 +155,7 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
             finalShape2[i] = finalShape1[i]
         else:
             raise IndexingError()
-    return tuple(finalShape1)
+    return finalShape1
 
 
 def strides_from_shape(shape: UserShape) -> UserStrides:

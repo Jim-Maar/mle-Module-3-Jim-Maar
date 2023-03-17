@@ -162,7 +162,7 @@ def tensor_map(
             for i in prange(len(out)):
                 out[i] = fn(in_storage[i])
         else:
-            for iOut in range(len(out)):
+            for iOut in prange(len(out)):
                 # breakpoint()
                 indOut: Index = len(out_shape) * [0]
                 to_index(iOut, out_shape, indOut)
@@ -209,7 +209,7 @@ def tensor_zip(
         if len(out) == len(a_storage) and len(out) == len(b_storage) and np.array_equal(a_strides, out_strides) and np.array_equal(b_strides, out_strides):
             for i in prange(len(out)):
                 out[i] = fn(a_storage[i], b_storage[i])
-        for i in range(len(out)):
+        for i in prange(len(out)):
             # breakpoint()
             ind: Index = len(out_shape) * [0]
             to_index(i, out_shape, ind)
