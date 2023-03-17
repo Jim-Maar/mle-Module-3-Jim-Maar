@@ -62,16 +62,19 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
         out_index : return index corresponding to position.
 
     """
-    ord: int = ordinal
+    ord: int = ordinal + 0
     stride: Iterable[int] = len(shape) * [0]
     strideVal: int = 1
     for i in range(len(shape) - 1, -1, -1):
         stride[i] = strideVal
         strideVal *= shape[i]
     # stride = tuple(stride)
-    for i, strideVal in enumerate(stride):
-        out_index[i] = ord // strideVal
-        ord = ord % strideVal
+    # for i, strideVal in enumerate(stride):
+    #     out_index[i] = ord // strideVal
+    #     ord = ord % strideVal
+    for i in range(len(stride)):
+        out_index[i] = ord // stride[i]
+        ord = ord % stride[i]
 
 
 def to_index_from_strides(ordinal: int, strides: Strides, out_index: OutIndex) -> None:
@@ -88,9 +91,12 @@ def to_index_from_strides(ordinal: int, strides: Strides, out_index: OutIndex) -
 
     """
     ord: int = ordinal
-    for i, strideVal in enumerate(strides):
-        out_index[i] = ord // strideVal
-        ord = ord % strideVal
+    # for i, strideVal in enumerate(strides):
+    #     out_index[i] = ord // strideVal
+    #     ord = ord % strideVal
+    for i in range(len(strides)):
+        out_index[i] = ord // strides[i]
+        ord = ord % strides[i]
 
 
 def broadcast_index(
