@@ -150,7 +150,6 @@ def tensor_map(
     Returns:
         Tensor map function.
     """
-
     def _map(
         out: Storage,
         out_shape: Shape,
@@ -159,9 +158,18 @@ def tensor_map(
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 3.1.
-        raise NotImplementedError("Need to implement for Task 3.1")
-
+        if np.array_equal(in_strides, out_strides) and len(out) == len(in_storage):
+            for i in prange(len(out)):
+                out[i] = fn(in_storage[i])
+        else:
+            for iOut in range(len(out)):
+                # breakpoint()
+                indOut: Index = len(out_shape) * [0]
+                to_index(iOut, out_shape, indOut)
+                indIn: Index = len(in_shape) * [0]
+                broadcast_index(indOut, out_shape, in_shape, indIn)
+                iIn: int = index_to_position(indIn, in_strides)
+                out[iOut] = fn(float(in_storage[iIn]))
     return njit(parallel=True)(_map)  # type: ignore
 
 
@@ -198,9 +206,20 @@ def tensor_zip(
         b_shape: Shape,
         b_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 3.1.
-        raise NotImplementedError("Need to implement for Task 3.1")
-
+        if len(out) == len(a_storage) and len(out) == len(b_storage) and np.array_equal(a_strides, out_strides) and np.array_equal(b_strides, out_strides):
+            for i in prange(len(out)):
+                out[i] = fn(a_storage[i], b_storage[i])
+        for i in range(len(out)):
+            # breakpoint()
+            ind: Index = len(out_shape) * [0]
+            to_index(i, out_shape, ind)
+            indA: Index = len(a_shape) * [0]
+            indB: Index = len(b_shape) * [0]
+            broadcast_index(ind, out_shape, a_shape, indA)
+            broadcast_index(ind, out_shape, b_shape, indB)
+            iA: int = index_to_position(indA, a_strides)
+            iB: int = index_to_position(indB, b_strides)
+            out[i] = fn(a_storage[iA], b_storage[iB])
     return njit(parallel=True)(_zip)  # type: ignore
 
 
@@ -232,9 +251,17 @@ def tensor_reduce(
         a_strides: Strides,
         reduce_dim: int,
     ) -> None:
-        # TODO: Implement for Task 3.1.
-        raise NotImplementedError("Need to implement for Task 3.1")
-
+        reducedDim: int = a_shape[reduce_dim]
+        reducedStride: int = a_strides[reduce_dim]
+        for i in prange(len(out)):
+            outInd: Index = len(out_shape) * [0]
+            to_index(i, out_shape, outInd)
+            outInd = outInd[0 : reduce_dim] + [0] + outInd[reduce_dim + 1 :]
+            aStart: int = index_to_position(outInd, a_strides)
+            reduction: int = a_storage[aStart]
+            for j in range(aStart + reducedStride, aStart + reducedDim * reducedStride, reducedStride):
+                reduction = fn(reduction, a_storage[j])
+            out[i] = reduction
     return njit(parallel=True)(_reduce)  # type: ignore
 
 
